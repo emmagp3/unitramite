@@ -1,10 +1,13 @@
 import Head from 'next/head';
-import { Container, Row, Col } from 'react-bootstrap';
-import SchoolCard from '../../components/school_cards/school_card';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import SchoolCard, {
+  SchoolCardProps,
+} from '../../components/school_cards/school_card';
+import schoolStore from '../../api/school.store';
+import CustomNavBar from '../../components/navbar/navbar';
+import { GetStaticProps } from 'next';
 
-const schools = ['ESCOM', 'ESCA', 'EST', 'ESIQIE', 'ESFM', 'UPIICSA'];
-
-export default function Home() {
+export default function Home({ schools }: { schools: SchoolCardProps[] }) {
   return (
     <>
       <Head>
@@ -14,21 +17,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <h1>Unitramite</h1>
-        <Container>
-          <Row>
-            {schools.map((school) => (
-              <Col>
-                <SchoolCard
-                  key={school.toLowerCase()}
-                  name={school}
-                  src={`${school}.jpg`}
-                />
-              </Col>
-            ))}
-          </Row>
+        <CustomNavBar />
+        <Container fluid>
+          {schools.map((school) => (
+            <SchoolCard key={school.id} {...school} />
+          ))}
         </Container>
       </main>
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps = () => {
+  schoolStore.initStore();
+  const schools = schoolStore.getSchoolsCardProps();
+  return {
+    props: {
+      schools,
+    },
+  };
+};

@@ -1,23 +1,43 @@
+import { useRouter } from 'next/router';
 import { Card, Button } from 'react-bootstrap';
 
-interface SchoolCardProps {
+export interface SchoolCardProps {
+  id: string;
   name: string;
+  description: string;
   src: string;
 }
 
-export default function SchoolCard({ name, src }: SchoolCardProps) {
+export default function SchoolCard({
+  id,
+  name,
+  src,
+  description,
+}: SchoolCardProps) {
+  const router = useRouter();
   return (
-    <Card style={{ width: 'auto', margin: '10px' }}>
-      {/* <Card.Img variant="top" src={src} /> */}
+    <Card
+      style={{
+        width: 'auto',
+        height: 'auto',
+        margin: '10px',
+      }}
+    >
+      <Card.Img
+        variant="top"
+        src={src}
+        style={{ width: '100px', alignSelf: 'center', margin: '10px' }}
+      />
       <Card.Body>
-        <Card.Title>{name}</Card.Title>
-        {/* {shortDescription && <Card.Text>{shortDescription}</Card.Text>} */}
+        <Card.Title style={{ textAlign: 'center' }}>{name}</Card.Title>
+        <Card.Text style={{ textAlign: 'justify' }}>{description}</Card.Text>
       </Card.Body>
       <Button
         variant="primary"
         style={{ width: '90%', alignSelf: 'center', margin: '10px' }}
+        onClick={() => router.push(`/schools/${id}`)}
       >
-        Go somewhere
+        Ver trámites
       </Button>
     </Card>
   );

@@ -92,7 +92,7 @@ const getSchoolsCardProps = (): SchoolCardProps[] => {
 const getSchoolData = (id: string) => {
   const result = state.schools.find((school) => school.id === id);
   if (!result) return;
-  return result.makeGeneric();
+  return result.serialize();
 };
 
 const getSchoolsPaths = () => {

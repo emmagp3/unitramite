@@ -29,7 +29,7 @@ export default class PaperWork {
     return this._documentsRequired;
   }
 
-  makeGeneric() {
+  serialize() {
     return {
       id: this._id,
       name: this._name,

@@ -1,5 +1,4 @@
 import PaperWork from './paperwork.model';
-import { v4 as uuid } from 'uuid';
 
 export default class School {
   private readonly _id: string;
@@ -46,14 +45,14 @@ export default class School {
     return this._paperWork;
   }
 
-  makeGeneric() {
+  serialize() {
     return {
       id: this._id,
       name: this._name,
       logo: this._logo,
       description: this._description,
       address: this._address,
-      paperWork: this._paperWork.map((process) => process.makeGeneric()),
+      paperWork: this._paperWork.map((process) => process.serialize()),
     };
   }
 }

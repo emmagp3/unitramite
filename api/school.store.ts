@@ -1,186 +1,37 @@
+import { initializeApp } from 'firebase/app';
+import { child, get, getDatabase, ref } from 'firebase/database';
 import School from './stores/school.model';
-import PaperWork from './stores/paperwork.model';
-import { SchoolCardProps } from '../components/school_cards/school_card';
 
-const state = {
-  schools: Array<School>(),
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  appID: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-const initStore = () => {
-  const schools = [
-    new School(
-      'Escuela 1',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 2',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 3',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 4',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 5',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 6',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-    new School(
-      'Escuela 7',
-      'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat veniam ex nulla est dolor est tempor irure. Voluptate ad fugiat ut ut ex aute tempor voluptate in occaecat amet exercitation nulla. Esse ipsum cillum nisi duis nostrud. Non quis exercitation proident ut officia incididunt. Velit nisi nostrud amet reprehenderit ex nostrud.',
-      'Dirección 3',
-      [
-        new PaperWork(
-          'Trámite 1',
-          'Descripción 1',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 2',
-          'Descripción 2',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-        new PaperWork(
-          'Trámite 3',
-          'Descripción 3',
-          'Adipisicing occaecat ullamco anim nostrud exercitation velit. Duis aliquip duis ullamco velit cillum id esse qui eiusmod nisi do amet. Eu consequat laborum dolor eiusmod est cillum ullamco esse laborum officia nisi eiusmod. In eiusmod exercitation cillum in et tempor reprehenderit magna velit ad nostrud aute eu. Cupidatat irure do adipisicing veniam esse et ullamco qui nostrud aliqua sint pariatur.In exercitation proident anim occaecat'
-        ),
-      ]
-    ),
-  ];
-  state.schools = schools;
+const app = initializeApp(firebaseConfig);
+const database = getDatabase();
+
+export const getSchools = async () => {
+  let schoolsData: School[] = [];
+  const databaseRef = ref(database);
+  await get(child(databaseRef, 'schools/'))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        schoolsData = snapshot.val();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  return schoolsData;
 };
 
-const getSchoolsCardProps = (): SchoolCardProps[] => {
-  return state.schools.map((school) => {
-    const { id, name, description, logo: src } = school;
-    return { id, name, description, src };
-  });
-};
-
-const getSchoolData = (id: string) => {
-  const result = state.schools.find((school) => school.id === id);
-  if (!result) return;
-  return result.serialize();
-};
-
-const getSchoolsPaths = () => {
-  return state.schools.map((school) => {
+export const getSchoolsPaths = async () => {
+  return (await getSchools()).map((school) => {
     return {
       params: {
         id: school.id,
@@ -189,9 +40,8 @@ const getSchoolsPaths = () => {
   });
 };
 
-export default {
-  initStore,
-  getSchoolsCardProps,
-  getSchoolsPaths,
-  getSchoolData,
+export const getSchoolData = async (id: string) => {
+  const schoolsData = await getSchools();
+  const schoolData = schoolsData.find((school) => id === school.id);
+  return schoolData;
 };

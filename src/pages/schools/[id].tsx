@@ -1,38 +1,77 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import School from '../../../api/stores/school.model';
-import schoolStore from '../../../api/school.store';
+import { getSchoolData, getSchoolsPaths } from '../../../api/school.store';
 import Layout from '../../../components/layout/layout';
-import Link from 'next/link';
-import { Container } from 'react-bootstrap';
+import styles from './school.module.css';
+import { Alert, Container, Modal, Stack } from 'react-bootstrap';
+import CustomButton from '../../../components/button/button';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import ProcedureModal from '../../../components/modal/modal';
+import Procedure from '../../../api/stores/procedure.model';
 
 export default function SchoolPage({ schoolData }: { schoolData: School }) {
-  const { id, name, address, description, paperWork } = schoolData;
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [currentProcedure, setCurrentProcedure] = useState<Procedure>();
+  const { logo, name, address, procedures } = schoolData;
+
+  const onClickViewProcedureDetails = (procedure: Procedure) => {
+    setShowModal(true);
+    setCurrentProcedure(procedure);
+  };
+
   return (
     <Layout title={name}>
       <Container fluid>
-        <Link href="/">Volver a Inicio</Link>
-        <h1>{name}</h1>
-        <p>{address}</p>
-        <p>{description}</p>
-        <ul>
-          {paperWork.map((paperWork) => (
-            <li key={paperWork.id}>
-              <h2>{paperWork.name}</h2>
-              <h3>Acerca de este trámite:</h3>
-              <p>{paperWork.description}</p>
-              <h3>Requisitos:</h3>
-              <p>{paperWork.documentsRequired}</p>
-            </li>
+        <Alert variant="light" className={styles.borderBlack}>
+          <img src={logo} />
+          <h1>{name}</h1>
+          <p>
+            <strong>Ubicación:</strong> {address}
+          </p>
+        </Alert>
+        <section className={styles.ul}>
+          {procedures.map((procedure) => (
+            <Stack
+              key={procedure.id}
+              className={styles.li}
+              direction="horizontal"
+              gap={2}
+            >
+              <div className="p-2">
+                <p className="h6">{procedure.name}</p>
+              </div>
+              <div className="p-2 ms-auto">
+                <CustomButton
+                  type="primary"
+                  onClick={() => onClickViewProcedureDetails(procedure)}
+                >
+                  Más información
+                </CustomButton>
+              </div>
+            </Stack>
           ))}
-        </ul>
+        </section>
+        <ProcedureModal
+          procedure={currentProcedure}
+          show={showModal}
+          onHide={() => setShowModal(false)}
+        />
+        <CustomButton
+          className={styles.button}
+          type="primary"
+          onClick={() => router.push('/')}
+        >
+          Volver
+        </CustomButton>
       </Container>
     </Layout>
   );
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  schoolStore.initStore();
-  const paths = schoolStore.getSchoolsPaths();
+  const paths = await getSchoolsPaths();
   return {
     paths,
     fallback: false,
@@ -40,8 +79,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  schoolStore.initStore();
-  const schoolData = schoolStore.getSchoolData(params?.id as string);
+  const schoolData = await getSchoolData(params?.id as string);
   return {
     props: {
       schoolData,

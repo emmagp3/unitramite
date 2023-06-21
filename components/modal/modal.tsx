@@ -22,7 +22,7 @@ export default function ProcedureModal({
       aria-labelledby="contained-modal-title-vcenter"
       centered
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">
           {procedure?.name}
         </Modal.Title>

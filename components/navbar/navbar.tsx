@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Container, Navbar } from 'react-bootstrap';
-import CustomButton from '../button/button';
+import styles from './navbar.module.css';
+import { useContext } from 'react';
 
 export default function CustomNavBar() {
   return (
@@ -8,17 +9,13 @@ export default function CustomNavBar() {
       <Container fluid>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Brand>
-          <Link
-            href="/"
-            style={{
-              color: '#FFFFFF',
-              textDecoration: 'none',
-            }}
-          >
+          <Link href="/" className={styles.link}>
             Unitrámite
           </Link>
         </Navbar.Brand>
-        <CustomButton type="secondary">Iniciar Sesión</CustomButton>
+        <Link href="/login" className={styles.link}>
+          Iniciar sesión
+        </Link>
       </Container>
     </Navbar>
   );

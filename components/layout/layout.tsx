@@ -1,6 +1,12 @@
-import React from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useState,
+} from 'react';
 import CustomNavBar from '../navbar/navbar';
 import Head from 'next/head';
+import User from '../../api/stores/user.model';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +14,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, title }: LayoutProps) {
+  const [user, setUser] = useState<User>();
   return (
     <>
       <Head>

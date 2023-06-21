@@ -6,6 +6,7 @@ type ButtonType = 'primary' | 'secondary';
 interface CustomButtonProps {
   type: ButtonType;
   children: React.ReactNode;
+  input?: boolean;
   className?: string;
   id?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -13,6 +14,7 @@ interface CustomButtonProps {
 
 export default function CustomButton({
   type,
+  input,
   children,
   className,
   id,
@@ -30,6 +32,7 @@ export default function CustomButton({
     <Button
       onClick={onClick}
       variant={type}
+      type={input ? 'submit' : undefined}
       className={className}
       id={id}
       style={{
